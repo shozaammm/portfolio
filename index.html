@@ -695,6 +695,13 @@ a{color:inherit}
 
 /* ---------- responsive ---------- */
 @media (max-width:980px){
+  /* Mobile visibility guarantee: prevent blank/flickering screens when scrolling */
+  .slide{min-height:auto!important;justify-content:flex-start!important;padding-top:84px!important;padding-bottom:56px!important}
+  .rv, .mask>span, .card, .new, .cert, .poster-item, .cert-card, .tl-card{opacity:1!important;transform:none!important;transition:none!important}
+  .badge{transform:scale(1) rotate(0)!important}
+  .hl::before{transform:scaleX(1)!important}
+  .hl{color:var(--ink)!important}
+  .dark .hl{color:var(--paper)!important}
   .nav{display:none}
   .hero-grid,.res,.beyond{grid-template-columns:1fr}
   .portrait{max-width:280px;aspect-ratio:1}
@@ -1654,10 +1661,12 @@ a{color:inherit}
   /* number counters */
   function runCounters(root) {
     root.querySelectorAll('[data-count]').forEach(el => {
+      if (el.dataset.running === 'true') return;
+      el.dataset.running = 'true';
       const to = parseFloat(el.dataset.count), dec = +el.dataset.dec || 0;
       const pre = el.dataset.pre || '', suf = el.dataset.suf || '';
       const fmt = v => pre + (dec ? v.toFixed(dec) : Math.round(v).toLocaleString('en-IN')) + suf;
-      if (reduce) { el.textContent = fmt(to); return; }
+      if (reduce || narrow()) { el.textContent = fmt(to); return; }
       const t0 = performance.now(), dur = 1400;
       const tick = now => {
         const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
@@ -1671,6 +1680,10 @@ a{color:inherit}
     });
   }
   function resetCounters(root) {
+    if (narrow()) return;
+    root.querySelectorAll('[data-count]').forEach(el => {
+      delete el.dataset.running;
+    });
     root.querySelectorAll('.fill[data-w]').forEach(el => el.style.width = '0');
   }
 
@@ -1703,20 +1716,28 @@ a{color:inherit}
   /* play each slide when it becomes visible, reset when it leaves, so it replays like a deck */
   const io = new IntersectionObserver(entries => {
     entries.forEach(en => {
-      const s = en.target.closest('.slide');
+      const s = en.target.closest('.slide') || en.target;
       if (en.isIntersecting) {
         s.classList.add('on');
         runCounters(s);
         if (s.id === 'stack') cycle(s, '.row', 1500, false);
         if (s.id === 'process') cycle(s, '.step', 1100, true);
-      } else {
+      } else if (!narrow()) {
         s.classList.remove('on');
         resetCounters(s);
         if (s.id === 'stack' || s.id === 'process') stopCycle(s);
       }
     });
-  }, { threshold: 0.3 });
-  slides.forEach(s => io.observe(s === work ? pin : s));
+  }, { threshold: 0.05 });
+  slides.forEach(s => io.observe(s === work && !narrow() ? pin : s));
+
+  // Initialize all slides on mobile immediately so no blank frames occur
+  if (narrow()) {
+    slides.forEach(s => {
+      s.classList.add('on');
+      runCounters(s);
+    });
+  }
 
   /* keyboard stops: every slide top, plus one stop per work card */
   function stops() {
@@ -1992,7 +2013,16 @@ a{color:inherit}
     panWork();
     const mid = scrollY + innerHeight * 0.45;
     let idx = 0;
-    slides.forEach((s, i) => { if (s.offsetTop <= mid) idx = i; });
+    slides.forEach((s, i) => {
+      if (s.offsetTop <= mid) idx = i;
+      if (narrow()) {
+        const r = s.getBoundingClientRect();
+        if (r.top < innerHeight * 1.5 && r.bottom > -100) {
+          s.classList.add('on');
+          runCounters(s);
+        }
+      }
+    });
     count.textContent = `${pad(idx + 1)} / ${pad(slides.length)}`;
     bar.classList.toggle('on-dark', slides[idx].classList.contains('dark'));
     const max = document.documentElement.scrollHeight - innerHeight;
@@ -2001,9 +2031,27 @@ a{color:inherit}
     navLinks.forEach(a => a.classList.toggle('cur', a.getAttribute('href') === '#' + id));
   }
   addEventListener('scroll', onScroll, { passive: true });
-  addEventListener('resize', () => { sizeWork(); onScroll(); });
-  addEventListener('load', () => { sizeWork(); onScroll(); });
-  document.fonts?.ready.then(() => { sizeWork(); onScroll(); });
+  addEventListener('resize', () => {
+    sizeWork();
+    if (narrow()) {
+      slides.forEach(s => { s.classList.add('on'); runCounters(s); });
+    }
+    onScroll();
+  });
+  addEventListener('load', () => {
+    sizeWork();
+    if (narrow()) {
+      slides.forEach(s => { s.classList.add('on'); runCounters(s); });
+    }
+    onScroll();
+  });
+  document.fonts?.ready.then(() => {
+    sizeWork();
+    if (narrow()) {
+      slides.forEach(s => { s.classList.add('on'); runCounters(s); });
+    }
+    onScroll();
+  });
   sizeWork(); onScroll();
 })();
 </script>
