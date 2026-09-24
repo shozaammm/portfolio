@@ -932,11 +932,42 @@ a{color:inherit}
         <div class="foot"><span class="tag">Python</span><span class="tag">Pandas</span><span class="tag">Excel</span></div>
       </article>
       <article class="card" style="--d:6;--c:var(--leaf)">
-        <div class="meta"><span>06, Research build</span><span>2025</span></div>
-        <h3>Predictive maintenance</h3>
-        <p>A Streamlit dashboard reading OBD-II signals. Isolation Forest flags anomalies and a two-layer LSTM (64/32) forecasts failures seven days out.</p>
-        <figure class="shot" style="background:#fff;"><img src="assets/predictive_maint.png" alt="Confusion Matrix and RUL Residual Error Distribution for Failure Prediction Model" loading="lazy" style="object-fit:contain;background:#fff;padding:6px;"><figcaption>Confusion Matrix &amp; RUL Error · 0.92 Recall</figcaption></figure>
-        <div class="foot"><span class="tag">TensorFlow</span><span class="tag">Streamlit</span><span class="tag">Python</span></div>
+        <div class="meta"><span>06, Research build</span><span>2025–26</span></div>
+        <h3>Predictive vehicle telemetry</h3>
+        <p>A vehicle telemetry &amp; predictive maintenance platform reading simulated CAN-bus &amp; OBD-II signals. Monitors real-time subsystem envelopes, detects anomalies, and forecasts component failure.</p>
+        <figure class="shot shot-slider" id="predSlider" aria-label="SpeedX Telemetry and Predictive Maintenance slides">
+          <div class="shot-track" id="predTrack">
+            <div class="slide-pane" data-slide="0" onclick="openLightbox('assets/speedx_telemetry_cruise.png', 'SpeedX Telemetry System · Cruise Profile &amp; Powertrain Stream')" title="Click to enlarge" style="cursor:pointer;">
+              <img src="assets/speedx_telemetry_cruise.png" alt="SpeedX Telemetry System Cruise Stream Dashboard" loading="lazy" draggable="false">
+              <span class="slide-badge">01 · Telemetry Dashboard</span>
+            </div>
+            <div class="slide-pane" data-slide="1" onclick="openLightbox('assets/speedx_sensor_matrix.png', 'SpeedX Telemetry · Sensor Matrix &amp; Factory Tolerances')" title="Click to enlarge" style="cursor:pointer;">
+              <img src="assets/speedx_sensor_matrix.png" alt="SpeedX Sensor Matrix and Factory Certified Tolerances" loading="lazy" draggable="false">
+              <span class="slide-badge">02 · Sensor Matrix &amp; Tolerances</span>
+            </div>
+            <div class="slide-pane" data-slide="2" onclick="openLightbox('assets/speedx_telemetry_sync.png', 'SpeedX Telemetry · Live Telemetry Stream &amp; Radar Diagnostics')" title="Click to enlarge" style="cursor:pointer;">
+              <img src="assets/speedx_telemetry_sync.png" alt="SpeedX High-Speed Performance and Health Radar" loading="lazy" draggable="false">
+              <span class="slide-badge">03 · Live Radar &amp; Fault Stream</span>
+            </div>
+            <div class="slide-pane" data-slide="3" onclick="openLightbox('assets/predictive_maint.png', 'Model Diagnostics · Confusion Matrix &amp; RUL Residual Error Distribution')" title="Click to enlarge" style="cursor:pointer;background:#fff;">
+              <img src="assets/predictive_maint.png" alt="Confusion Matrix and RUL Error Distribution" loading="lazy" draggable="false" style="object-fit:contain;background:#fff;padding:8px;">
+              <span class="slide-badge" style="background:rgba(0,0,0,0.85);color:var(--lime);">04 · ML Model Diagnostics</span>
+            </div>
+          </div>
+          <figcaption>SpeedX Telemetry &amp; ML Models · 4 Views</figcaption>
+          <div class="slider-controls">
+            <button type="button" class="slide-btn" id="predPrev" aria-label="Previous slide" title="Previous slide">←</button>
+            <div class="slide-indicators">
+              <button type="button" class="slide-dot active" data-index="0" aria-label="Slide 1: Telemetry Dashboard"></button>
+              <button type="button" class="slide-dot" data-index="1" aria-label="Slide 2: Sensor Matrix"></button>
+              <button type="button" class="slide-dot" data-index="2" aria-label="Slide 3: Radar Diagnostics"></button>
+              <button type="button" class="slide-dot" data-index="3" aria-label="Slide 4: ML Model Diagnostics"></button>
+            </div>
+            <button type="button" class="slide-btn" id="predNext" aria-label="Next slide" title="Next slide">→</button>
+          </div>
+          <span class="slide-hint">Swipe or click →</span>
+        </figure>
+        <div class="foot"><span class="tag">CAN-bus</span><span class="tag">OBD-II</span><span class="tag">TensorFlow / XGBoost</span><span class="tag">Streamlit</span></div>
       </article>
       <article class="card moss" style="--d:7;--c:var(--moss)">
         <div class="meta"><span>07, Fleet IoT</span><span>2025</span></div>
@@ -1904,6 +1935,7 @@ a{color:inherit}
   /* Initialize interactive card sliders */
   initCardSlider('bmwSlider', 'bmwTrack', 'bmwPrev', 'bmwNext');
   initCardSlider('hrSlider', 'hrTrack', 'hrPrev', 'hrNext');
+  initCardSlider('predSlider', 'predTrack', 'predPrev', 'predNext');
   initCardSlider('aushadhiSlider', 'aushadhiTrack', 'aushadhiPrev', 'aushadhiNext');
 
   /* Research showcase switcher */
